@@ -1,6 +1,6 @@
 /*******************************************************************************
 * @FileName:
-* @Author:
+* @Author: Michael
 * @Version:
 * @Date:
 * @Brief:
@@ -13,7 +13,7 @@
 ********************************************************************************
 * @History:
 *  1. Date:  
-*  Author:
+*  Author: Michael
 *  Modification:
 *  
 *  2. ...
@@ -22,15 +22,15 @@
 #include "MB_Master_Callback.h"
 #include "MB_Master.h"
 #include "Thread.h"
-#include "Device02.h"
-#include "Device01.h"
+#include "Inclinometer.h"
+#include "Wind.h"
 
 #define MBRequestADU_LENGTH_MIN  ( 4 )
 #define MBRequestADU_LENGTH_MAX  ( 8 )
 
 #define SlD_MaxIndex       ( 1 )
-#define SlD_Device01       ( 0 )
-#define SlD_Device02       ( 1 )
+#define SlD_WindSensor01   ( 0 )
+#define SlD_Inclinometer01 ( 1 )
 
 uint16_t SalveDeviceIndex = 0;
 
@@ -64,15 +64,23 @@ enum mBool MB_MstIdleCallback(void)
 	/* 创建请求ADU */
 	switch(SalveDeviceIndex)
 	{
-		case SlD_Device01:
+		case SlD_WindSensor01:
 		{
-			pusLength = Device01_ReadSpeedCmd(MB_MstReqADU);
+			if ((Tr.WindCtrl & 0x8000) == 0x8000)
+			{
+				pusLength = Wind_ReadSpeedCmd(MB_MstReqADU);
+			}
+			else
+			{
+				pusLength = 0;
+			}
+			
 			break;
 		}
 		
-		case SlD_Device02:
+		case SlD_Inclinometer01:
 		{
-			pusLength = Device02_ReadAngleCmd(MB_MstReqADU);
+			pusLength = Inclinometer_ReadAngleCmd(MB_MstReqADU);
 			break;
 		}
 		
@@ -137,13 +145,13 @@ enum MBExceptionCode MB_MstExcuteResponseCallBack(uint8_t * pusRepADU, uint16_t 
 	repID = pusRepADU[0];
 	pucPDU = &pusRepADU[MB_SER_ADU_PDU_OFFSET]; // 指向PDU
 	
-	if (repID == Device01.Addr)
+	if (repID == Wind.Addr)
 	{
-		exStatus = Device01_Process(pucPDU, usLength); // 风速仪的处理
+		exStatus = Wind_Process(pucPDU, usLength); // 风速仪的处理
 	}
-	else if(repID == Device02.ID)
+	else if(repID == Inclinometer.ID)
 	{
-		exStatus = Device02_Process(pucPDU, usLength); // 倾角仪的处理
+		exStatus = Inclinometer_Process(pucPDU, usLength); // 倾角仪的处理
 	}
 	
 	GotoNextSlaveDevice();
