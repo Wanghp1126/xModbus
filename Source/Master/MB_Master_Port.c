@@ -124,11 +124,6 @@ enum mFlagStatus MB_MstPortStateGet(enum MB_Master_PortStateEnum portState)
 		
 		default:break;
 	}
-	if(USART2Buf.PortTxState == PORT_STATE_TX_TRANSMITTED)
-	{
-		MBM_PortState = MBMPE_FRAME_SEND;
-	}
-	
 	
 	
 	if(MBM_PortState == portState)

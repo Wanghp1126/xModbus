@@ -60,6 +60,9 @@ enum mBool MB_MstIdleCallback(void)
 {
 	enum mBool cmdSend = mFALSE;
 	uint16_t pusLength = 0;
+	
+	/* 移动到下一个从站设备 */
+	GotoNextSlaveDevice();
 
 	/* 创建请求ADU */
 	switch(SalveDeviceIndex)
@@ -121,7 +124,6 @@ enum mBool MB_MstIdleCallback(void)
 void MB_MstTurnAroundCallBack(void)
 {
 	MB_MstErrStatus = MB_ERR_NONE;
-	GotoNextSlaveDevice();
 }
 
 /**
@@ -152,9 +154,8 @@ enum MBExceptionCode MB_MstExcuteResponseCallBack(uint8_t * pusRepADU, uint16_t 
 	else if(repID == Inclinometer.ID)
 	{
 		exStatus = Inclinometer_Process(pucPDU, usLength); // 倾角仪的处理
-	}
+	}	
 	
-	GotoNextSlaveDevice();
 	return exStatus;
 }
 
@@ -199,9 +200,8 @@ void MB_MstExcuteError(uint8_t iD, uint8_t funcCode, uint8_t exCode)
 			default:
 				break;
 		}
-	}
+	}	
 	
-	GotoNextSlaveDevice();
 	MB_MstErrStatus = MB_ERR_NONE;
 }
 
