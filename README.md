@@ -4,3 +4,5 @@ Some of these methods borrowed FreeModbus.
 
 Author: Michael
 Email: wanghp2008.happy@163.com
+
+![Toaster oven: Hierarchical state machine](State Machine.bmp)
